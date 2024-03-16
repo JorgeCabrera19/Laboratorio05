@@ -1,0 +1,45 @@
+import serial
+from tkinter import *
+
+# Configura el puerto serial, ajusta el puerto COM según corresponda
+puerto = serial.Serial('COM3', 9600)
+
+# Función para enviar comandos al puerto serial
+def enviar_comando(comando):
+    puerto.write(bytes(str(comando), 'utf-8'))
+
+# Función para encender cada LED
+def encender_led(num_led):
+    enviar_comando(str(num_led))
+
+# Función para apagar todos los LEDs
+def apagar_todo():
+    enviar_comando('0')
+
+# Función para cerrar el puerto serial antes de cerrar la ventana
+def cerrar_puerto():
+    puerto.close()
+    root.destroy()
+
+# Configura la ventana y los botones
+root = Tk()
+root.title("Control de LEDs")
+
+# Configura los botones para encender cada LED
+for i in range(4):
+    btn_encender = Button(root, text=f"LED {i+1}", command=lambda idx=i+1: encender_led(idx))
+    btn_encender.pack()
+
+# Botón para apagar todos los LEDs
+btn_apagar_todo = Button(root, text="Apagar todo", command=apagar_todo)
+btn_apagar_todo.pack()
+
+# Botón para salir
+btn_salir = Button(root, text="Salir", command=cerrar_puerto)
+btn_salir.pack()
+
+# Función para cerrar la ventana
+root.protocol("WM_DELETE_WINDOW", cerrar_puerto)
+root.mainloop()
+
+
